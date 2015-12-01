@@ -30,9 +30,6 @@
     <ClCompile Include="PLEASEREMOVE.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PLEASEREMOVESERVER.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
@@ -42,9 +39,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PLEASEREMOVE.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PLEASEREMOVESERVER.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

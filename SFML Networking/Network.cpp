@@ -56,12 +56,13 @@ void ThreadReceive(unsigned short socket)
 	char buf[BUFLEN];
 	while (true)
 	{
+		memset(buf, '\0', BUFLEN);
 		if (recvfrom(socket, buf, BUFLEN, 0, (struct sockaddr *) &si_other2, &slen2) == SOCKET_ERROR)
 		{
 			printf("recvfrom() failed with error code : %d\n", WSAGetLastError());
 		}
 		else{
-			printf("Message", buf);
+			printf("Message received: %s", buf);
 		}
 		memset(buf, '\0', BUFLEN);
 		
@@ -69,8 +70,7 @@ void ThreadReceive(unsigned short socket)
 }
 void Network::Send(std::string message)
 {
-
-	if (sendto(s, message.c_str(), strlen(message.c_str()), 0, (struct sockaddr *) &si_other, slen) == SOCKET_ERROR)
+	if (sendto(s, message.c_str(), message.size(), 0, (struct sockaddr *) &si_other, slen) == SOCKET_ERROR)
 	{
 		printf("sendto() failed with error code : %d", WSAGetLastError());
 	}

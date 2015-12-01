@@ -1,18 +1,17 @@
 #include <SFML/Graphics.hpp>
 #include "Network.h"
 #include "PLEASEREMOVE.h"
-#include "PLEASEREMOVESERVER.h"
-
+#include <iostream>
+#include <string>
 
 int main()
 {
-	//Network network("172.31.16.54", 8888);
+	Network network("127.0.0.1", 8888);
 	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
-	PLEASEREMOVE *remove = new PLEASEREMOVE();
-	//PLEASEREMOVESERVER *server = new PLEASEREMOVESERVER();
-	while (window.isOpen())
+	//PLEASEREMOVE *remove = new PLEASEREMOVE();
+	/*while (window.isOpen())
 	{
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -24,6 +23,13 @@ int main()
 		window.clear();
 		window.draw(shape);
 		window.display();
+	}*/
+	while (true)
+	{
+		std::cout << " Give a message: " << std::endl;
+		std::string data;
+		getline(std::cin, data);
+		network.Send(std::string(data));
 	}
 	system("PAUSE");
 	return 0;
