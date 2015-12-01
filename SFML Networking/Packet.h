@@ -21,7 +21,7 @@ public:
 	Packet(std::vector<VariableType> variableTypes);
 	~Packet();
 	size_t getSize();
-	char *Send(unsigned int packetId,...);
+	std::string Send(unsigned int packetId,...);
 private:
 	unsigned int packetId;
 	size_t size;
