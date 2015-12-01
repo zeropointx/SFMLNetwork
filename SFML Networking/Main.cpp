@@ -1,17 +1,19 @@
 #include <SFML/Graphics.hpp>
 #include "Network.h"
-#include "PLEASEREMOVE.h"
 #include <iostream>
 #include <string>
-
+#include <thread>
+#include "CoordinatePacket.h"
+void NetworkThread();
 int main()
 {
-	Network network("127.0.0.1", 8888);
+	std::thread networkThread(NetworkThread);
+	networkThread.detach();
 	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
 	//PLEASEREMOVE *remove = new PLEASEREMOVE();
-	/*while (window.isOpen())
+	while (window.isOpen())
 	{
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -23,7 +25,17 @@ int main()
 		window.clear();
 		window.draw(shape);
 		window.display();
-	}*/
+	}
+
+	system("PAUSE");
+	return 0;
+}
+void NetworkThread()
+{
+	Network network("127.0.0.1", 8888);
+	CoordinatePacket packet;
+	char *data = packet.Send(0, 555, 555);
+	network.Send(data);
 	while (true)
 	{
 		std::cout << " Give a message: " << std::endl;
@@ -31,6 +43,4 @@ int main()
 		getline(std::cin, data);
 		network.Send(std::string(data));
 	}
-	system("PAUSE");
-	return 0;
 }

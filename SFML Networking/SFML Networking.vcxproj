@@ -79,16 +79,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="client_thread.cpp" />
+    <ClCompile Include="CoordinatePacket.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="Packet.cpp" />
+    <ClCompile Include="PacketHandler.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PLEASEREMOVE.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CoordinatePacket.h" />
     <ClInclude Include="Network.h" />
+    <ClInclude Include="Packet.h" />
+    <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="PLEASEREMOVE.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
