@@ -1,12 +1,13 @@
 #include "Packet.h"
 #include <assert.h>
 #include <stdio.h>
-#include <stdarg.h>
+
 #include <sstream>
 Packet::Packet(std::vector<VariableType> variableTypes)
 {
 	
 	size = 0;
+	sizeType = FIXED;
 	//add packetId
 	//variableTypes.insert(variableTypes.begin(), UINT);
 	//push back /0 in the end
@@ -47,10 +48,9 @@ size_t Packet::getSize(VariableType type)
 		return -1;
 	}
 }
-std::string Packet::Send(unsigned int packetId,...)
+std::string Packet::toString(Packet *packet,va_list argumentList)
 {
-	va_list argumentList;
-	va_start(argumentList, packetId);
+	//va_start(argumentList, packet);
 	//char *p = (char*)malloc(size);
 	std::ostringstream oss;
 	int index = 0;
@@ -84,7 +84,7 @@ std::string Packet::Send(unsigned int packetId,...)
 		}
 		
 	}
-	va_end(argumentList);
+	//va_end(argumentList);
 	
 	//*((char*)(&p[index])) = '\0';
 	return oss.str();

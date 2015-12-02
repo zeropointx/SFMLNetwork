@@ -2,7 +2,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "Network.h"
-
+#include "Packet.h"
 #include<thread>
 #define BUFLEN 512  //Max length of buffer
 void ThreadReceive(unsigned short socket);
@@ -74,4 +74,14 @@ void Network::Send(std::string message)
 	{
 		printf("sendto() failed with error code : %d", WSAGetLastError());
 	}
+}
+void Network::Send(Packet *p,...)
+{
+	va_list args;
+	int packetId = p->packetId;
+	std::string data;
+	va_start(args, p);
+	data = p->toString(p, args);
+	va_end(args);
+	Send(data.c_str());
 }

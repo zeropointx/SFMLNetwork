@@ -33,9 +33,9 @@ int main()
 void NetworkThread()
 {
 	Network network("127.0.0.1", 8888);
-	CoordinatePacket packet;
-	std::string data = packet.Send(0, 555, 555);
-	network.Send(data.c_str());
+	CoordinatePacket *packet = new CoordinatePacket();
+//	std::string data = packet.Send(0, 555, 555);
+	network.Send(packet,555,555);
 	while (true)
 	{
 		std::cout << " Give a message: " << std::endl;

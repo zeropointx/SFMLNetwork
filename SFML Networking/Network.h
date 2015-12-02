@@ -3,7 +3,7 @@
 #include<winsock2.h>
 #include<stdio.h>
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
-
+class Packet;
 class Network
 {
 
@@ -12,6 +12,7 @@ public:
 	~Network();
 	void Initialize();
 	void Send(std::string message);
+	void Send(Packet *p,...);
 private:
 	std::string ip;
 	unsigned short port;

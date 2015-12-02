@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
+/*#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 
 #include<stdio.h>
@@ -6,10 +6,12 @@
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
 #define BUFLEN 512  //Max length of buffer
 #define PORT 8888   //The port on which to listen for incoming data
- 
-
+ */
+/*
+#include "Network.h"
 int main()
 {
+	/*
     SOCKET s;
     struct sockaddr_in server, si_other;
     int slen , recv_len;
@@ -70,7 +72,12 @@ int main()
  
     closesocket(s);
     WSACleanup();
+	*/
+/*
+	Network *n = new Network(8888);
+	while (true)
+	{
 
-
+	}
     return 0;
-}
+}*/
