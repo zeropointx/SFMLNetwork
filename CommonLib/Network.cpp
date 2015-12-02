@@ -1,13 +1,12 @@
 #include "Network.h"
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
+
 
 #include<stdio.h>
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
 #include <thread>
+#include<iostream>
 
-
-Network::Network(std::string ip, unsigned short port,bool server)
+Network::Network(std::string ip, unsigned short port, bool server)
 {
 	this->ip = ip;
 	this->port = port; 
@@ -41,11 +40,11 @@ void Network::Initialize()
 }
 void Network::InitializeServer()
 {
-	socketAddrThis.sin_family = AF_INET;
-	socketAddrThis.sin_addr.s_addr = INADDR_ANY;
-	socketAddrThis.sin_port = htons(port);
+	localConnection.socketAddr.sin_family = AF_INET;
+	localConnection.socketAddr.sin_addr.s_addr = INADDR_ANY;
+	localConnection.socketAddr.sin_port = htons(port);
 
-	if (bind(socketThis, (struct sockaddr *)&socketAddrThis, sizeof(socketAddrThis)) == SOCKET_ERROR)
+	if (bind(socketThis, (struct sockaddr *)&localConnection.socketAddr, sizeof(localConnection.socketAddr)) == SOCKET_ERROR)
 	{
 		printf("Bind failed with error code : %d", WSAGetLastError());
 		exit(EXIT_FAILURE);
@@ -53,10 +52,10 @@ void Network::InitializeServer()
 }
 void Network::InitializeClient()
 {
-	memset((char *)&socketAddrThis, 0, sizeof(socketAddrThis));
-	socketAddrThis.sin_family = AF_INET;
-	socketAddrThis.sin_port = htons(port);
-	socketAddrThis.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
+	memset((char *)&localConnection.socketAddr, 0, sizeof(localConnection.socketAddr));
+	localConnection.socketAddr.sin_family = AF_INET;
+	localConnection.socketAddr.sin_port = htons(port);
+	localConnection.socketAddr.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
 	
 }
 void Network::InitializeThreads()
@@ -77,9 +76,8 @@ void Network::ReceiveThread()
 			printf("recvfrom() failed with error code : %d\n", WSAGetLastError());
 		}
 		else{
-			printf("Message received: %s\n", buf);
+			std::cout << "Message received: " << buf << std::endl;
 		}
-		memset(buf, '\0', BUFLEN);
 
 	}
 }
@@ -88,10 +86,19 @@ void Network::SendThread()
 	while (true)
 	{
 		std::string message = "";
-		if (sendto(socketThis, message.c_str(), message.size(), 0, (struct sockaddr *) &socketAddrThis, sizeof(socketAddrThis)) == SOCKET_ERROR)
+		if (sendto(socketThis, message.c_str(), message.size(), 0, (struct sockaddr *) &localConnection.socketAddr, sizeof(localConnection.socketAddr)) == SOCKET_ERROR)
 		{
 			printf("sendto() failed with error code : %d", WSAGetLastError());
 		}
 	}
 	
+}
+Connection *Network::findConnection(std::string ip)
+{
+	auto it = connections.find(ip);
+	if (it != connections.end())
+	{
+		return &it->second;
+	}
+	return nullptr;
 }

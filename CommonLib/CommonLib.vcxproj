@@ -76,10 +76,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Connection.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Connection.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>

@@ -1,6 +1,10 @@
 #pragma once
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <string>
 #include<winsock2.h>
+#include "Connection.h"
+#include <map>
 #define BUFLEN 512  //Max length of buffer
 class Network
 {
@@ -17,7 +21,9 @@ private:
 	std::string ip;
 	unsigned int port;
 	SOCKET socketThis;
-	struct sockaddr_in socketAddrThis;
 	bool server;
+	Connection localConnection;
+	std::map<std::string,Connection> connections;
+	Connection *findConnection(std::string ip);
 };
 
