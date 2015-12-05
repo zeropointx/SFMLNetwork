@@ -93,12 +93,19 @@ void Network::SendThread()
 	}
 	
 }
-Connection *Network::findConnection(std::string ip)
+Connection *Network::findConnection(std::string ip,std::string port)
 {
-	auto it = connections.find(ip);
+	auto it = connections.find(ip+":"+port);
 	if (it != connections.end())
 	{
 		return &it->second;
 	}
 	return nullptr;
+}
+void Network::Send(Packet *packet, Connection *sendTo)
+{
+	PacketData data;
+	data.packet = packet;
+	data.connection = sendTo;
+	outData.push_back(data);
 }

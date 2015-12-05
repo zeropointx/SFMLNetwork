@@ -1,8 +1,8 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "Network\Network.h"
-#include "Network\Packet.h"
+#include "Network.h"
+#include "Packet.h"
 #include<thread>
 #define BUFLEN 512  //Max length of buffer
 void ThreadReceive(unsigned short socket);

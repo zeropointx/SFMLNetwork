@@ -3,7 +3,10 @@
 #include <iostream>
 #include <string>
 #include <thread>
-#include "CoordinatePacket.h"
+#include "Network\CoordinatePacket.h"
+#include "Game\SceneSys.h"
+#include "Game\MainMenu.h"
+#include "Timer.h"
 void NetworkThread();
 int main()
 {
@@ -12,19 +15,28 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
+	SceneSys::ChangeScene(new MainMenu());
+	Timer deltaTime;
 	//PLEASEREMOVE *remove = new PLEASEREMOVE();
+	deltaTime.start();
 	while (window.isOpen())
 	{
+		
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
+		float passedTime = deltaTime.getCurrentTimeSeconds();
+		SceneSys::Update(passedTime);
 
+			deltaTime.start();
 		window.clear();
-		window.draw(shape);
+		SceneSys::Draw();
+		//window.draw(shape);
 		window.display();
+		
 	}
 
 	system("PAUSE");
@@ -32,15 +44,15 @@ int main()
 }
 void NetworkThread()
 {
-	Network network("127.0.0.1", 8888);
+	
+	Network network("127.0.0.1", 8888,false);
 	CoordinatePacket *packet = new CoordinatePacket();
-//	std::string data = packet.Send(0, 555, 555);
-	network.Send(packet,555,555);
+	//network.Send(packet,555,555);
 	while (true)
 	{
 		std::cout << " Give a message: " << std::endl;
 		std::string data;
 		getline(std::cin, data);
-		network.Send(std::string(data));
+		//network.Send(std::string(data));
 	}
 }

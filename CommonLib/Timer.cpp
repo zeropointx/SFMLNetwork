@@ -16,6 +16,5 @@ void Timer::start()
 }
 float Timer::getCurrentTimeSeconds()
 {
-	clock_t end = clock();
-	return float(end - startTime) / CLOCKS_PER_SEC;
+	return float(clock() - startTime) / CLOCKS_PER_SEC;
 }
