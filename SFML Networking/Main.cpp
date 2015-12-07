@@ -12,7 +12,8 @@ int main()
 {
 	std::thread networkThread(NetworkThread);
 	networkThread.detach();
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+	sf::Vector2f desktopRes= sf::Vector2f(VideoMode::getDesktopMode().width, VideoMode::getDesktopMode().height);
+	sf::RenderWindow window(sf::VideoMode(desktopRes.x/2, desktopRes.y/2), "SFML works!");
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
 	SceneSys::ChangeScene(new MainMenu());
@@ -47,7 +48,7 @@ void NetworkThread()
 	
 	Network network("127.0.0.1", 8888,false);
 	CoordinatePacket *packet = new CoordinatePacket();
-	//network.Send(packet,555,555);
+	network.Send(packet, 555, 555);
 	while (true)
 	{
 		std::cout << " Give a message: " << std::endl;

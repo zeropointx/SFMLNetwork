@@ -1,6 +1,6 @@
 #include "Network.h"
 
-
+#include <varargs.h>
 #include<stdio.h>
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
 #include <thread>
@@ -11,11 +11,13 @@ Network::Network(std::string ip, unsigned short port, bool server)
 	this->ip = ip;
 	this->port = port; 
 	this->server = server;
+	Initialize();
 }
 
 
 Network::~Network()
 {
+	threadsRunning = false;
 }
 void Network::Initialize()
 {
@@ -31,7 +33,7 @@ void Network::Initialize()
 		printf("Could not create socket : %d", WSAGetLastError());
 		exit(EXIT_FAILURE);
 	}
-
+	threadsRunning = true;
 	if (server)
 		InitializeServer();
 	else
@@ -60,15 +62,17 @@ void Network::InitializeClient()
 }
 void Network::InitializeThreads()
 {
-	std::thread receive(&Network::ReceiveThread, this);
-	receive.detach();
+	//std::thread receive(&Network::ReceiveThread, this);
+	//receive.detach();
+	std::thread send(&Network::SendThread, this);
+	send.detach();
 }
 void Network::ReceiveThread()
 {
 	struct sockaddr_in socketAddrOther;
 	int socketAddrLength = sizeof(socketAddrOther);
 	char buf[BUFLEN];
-	while (true)
+	while (threadsRunning)
 	{
 		memset(buf, '\0', BUFLEN);
 		if (recvfrom(socketThis, buf, BUFLEN, 0, (struct sockaddr *) &socketAddrOther, &socketAddrLength) == SOCKET_ERROR)
@@ -83,12 +87,26 @@ void Network::ReceiveThread()
 }
 void Network::SendThread()
 {
-	while (true)
+	sendTimer.start();
+	while (threadsRunning)
 	{
-		std::string message = "";
-		if (sendto(socketThis, message.c_str(), message.size(), 0, (struct sockaddr *) &localConnection.socketAddr, sizeof(localConnection.socketAddr)) == SOCKET_ERROR)
+		if (sendTimer.getCurrentTimeSeconds() >= SEND_DELAY)
 		{
-			printf("sendto() failed with error code : %d", WSAGetLastError());
+			outDataMutex.lock();
+			while (outData.size() > 0)
+			{
+				
+				std::string message = outData[0].data;
+				Connection *connection = outData[0].connection;
+				if (sendto(socketThis, message.c_str(), message.size(), 0, (struct sockaddr *) &connection->socketAddr, sizeof(connection->socketAddr)) == SOCKET_ERROR)
+				{
+					printf("sendto() failed with error code : %d", WSAGetLastError());
+				}
+				outData.erase(outData.begin());
+				
+			}
+			outDataMutex.unlock();
+			sendTimer.start();
 		}
 	}
 	
@@ -102,10 +120,20 @@ Connection *Network::findConnection(std::string ip,std::string port)
 	}
 	return nullptr;
 }
-void Network::Send(Packet *packet, Connection *sendTo)
+void Network::Send(Packet *packet,...)
 {
-	PacketData data;
-	data.packet = packet;
-	data.connection = sendTo;
-	outData.push_back(data);
+	va_list argList;
+
+
+
+	va_start(argList, packet);
+	std::string data = packet->toString(packet, argList);
+	va_end(argList);
+	PacketData packetData;
+	packetData.data = data;
+	packetData.connection = &localConnection;
+	//Mutex protected push
+	outDataMutex.lock();
+	outData.push_back(packetData);
+	outDataMutex.unlock();
 }

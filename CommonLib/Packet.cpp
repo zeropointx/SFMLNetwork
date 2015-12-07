@@ -8,10 +8,6 @@ Packet::Packet(std::vector<VariableType> variableTypes)
 	
 	size = 0;
 	sizeType = FIXED;
-	//add packetId
-	//variableTypes.insert(variableTypes.begin(), UINT);
-	//push back /0 in the end
-	//variableTypes.push_back(CHAR);
 	for (auto it = variableTypes.begin(); it != variableTypes.end(); it++)
 	{
 		if ((*it) == STRING)
@@ -50,8 +46,6 @@ size_t Packet::getSize(VariableType type)
 }
 std::string Packet::toString(Packet *packet,va_list argumentList)
 {
-	//va_start(argumentList, packet);
-	//char *p = (char*)malloc(size);
 	std::ostringstream oss;
 	int index = 0;
 	oss<<packetId;
@@ -60,23 +54,18 @@ std::string Packet::toString(Packet *packet,va_list argumentList)
 		switch ((*it))
 		{
 		case UINT:
-			//*((unsigned int *)(&p[index])) = va_arg(argumentList, unsigned int);
-			//index += getSize(UINT);
 			oss<<va_arg(argumentList, unsigned int);
 			continue;
 		case INT:
-			//*((int *)(&p[index])) = va_arg(argumentList, int);
-			//index += getSize(INT);
-			oss << va_arg(argumentList, int);
+		{
+			int number = va_arg(argumentList, int);
+			oss << number;
 			continue;
+		}
 		case STRING:
-			//*((int *)(&p[index])) = va_arg(argumentList, std::string);
-			//index += getSize(STRING);
 			oss << va_arg(argumentList, std::string);
 			continue;
 		case CHAR:
-			//*((char *)(&p[index])) = va_arg(argumentList, char);
-			//index += getSize(CHAR);
 			oss << va_arg(argumentList, char);
 			continue;
 		default:
@@ -84,8 +73,5 @@ std::string Packet::toString(Packet *packet,va_list argumentList)
 		}
 		
 	}
-	//va_end(argumentList);
-	
-	//*((char*)(&p[index])) = '\0';
 	return oss.str();
 }
