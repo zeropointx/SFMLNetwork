@@ -106,7 +106,7 @@ void Network::ReceiveThread()
 			u_short tempPort = ntohs(socketAddrOther.sin_port);
 			std::string portString = std::to_string(tempPort);
 			char *tempIP = inet_ntoa(socketAddrOther.sin_addr);
-			if (findConnection(ip, portString))
+			if (findConnection(ip, portString) == nullptr)
 			{
 				//Do something with received client
 				Connection *conn = new Connection(this);
