@@ -5,10 +5,10 @@
 #include<winsock2.h>
 #include <mutex>
 #include "Connection.h"
-#include <map>
+#include <vector>
 #include "Packet.h"
 #define BUFLEN 512  //Max length of buffer
-#define SEND_DELAY 5.001f
+#define SEND_DELAY 0.001f
 #define RECEIVE_DELAY 0.001f
 class Network
 {
@@ -17,13 +17,16 @@ class Network
 		std::string data;
 		Connection *connection;
 	 };
+	friend class Connection;
 public:
 	Network(std::string ip, unsigned short port, bool server);
 	~Network();
 	void Initialize();
-	void Send(Packet *data,...);
+
 	Connection localConnection;
+	std::vector<Connection*> *getConnections(){ return &connections; }
 private:
+	void Send(Connection *connection, std::string data);
 	void InitializeServer();
 	void InitializeClient();
 	void InitializeThreads();
@@ -34,7 +37,7 @@ private:
 	SOCKET socketThis;
 	bool server;
 
-	std::map<std::string,Connection> connections;
+	std::vector<Connection*> connections;
 
 	//Send and receive
 	std::vector<PacketData> outData;

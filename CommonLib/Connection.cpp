@@ -1,9 +1,10 @@
 #include "Connection.h"
-
-
-Connection::Connection()
+#include "Packet.h"
+#include "Network.h"
+Connection::Connection(Network *network)
 {
 	state = CONNECTED;
+	this->network = network;
 }
 
 
@@ -23,4 +24,13 @@ bool Connection::isTimedOut()
 	if (timeOutTimer.getCurrentTimeSeconds() > CONNECTION_LOST_TIME)
 		return true;
 	return false;
+}
+void Connection::Send(Packet *packet, ...)
+{
+	va_list argList;
+
+	va_start(argList, packet);
+	std::string data = packet->toString(packet, argList);
+	va_end(argList);
+	network->Send(this, data);
 }

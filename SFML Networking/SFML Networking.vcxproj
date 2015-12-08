@@ -81,14 +81,12 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
-    <ClCompile Include="Network\CoordinatePacket.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneParent.cpp" />
     <ClCompile Include="SceneSys.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h" />
-    <ClInclude Include="Network\CoordinatePacket.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SceneParent.h" />
     <ClInclude Include="SceneSys.h" />

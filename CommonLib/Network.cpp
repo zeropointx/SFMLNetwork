@@ -5,8 +5,7 @@
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
 #include <thread>
 #include<iostream>
-
-Network::Network(std::string ip, unsigned short port, bool server)
+Network::Network(std::string ip, unsigned short port, bool server) : localConnection(this)
 {
 	this->ip = ip;
 	this->port = port; 
@@ -38,8 +37,7 @@ void Network::Initialize()
 
 	memset((char *)&localConnection.socketAddr, 0, sizeof(localConnection.socketAddr));
 	localConnection.socketAddr.sin_family = AF_INET;
-	localConnection.socketAddr.sin_port = htons(port);
-
+	localConnection.socketAddr.sin_addr.s_addr = INADDR_ANY;
 	if (server)
 	{
 		InitializeServer();
@@ -48,15 +46,12 @@ void Network::Initialize()
 	{
 		InitializeClient();
 	}
-	int enable = 1;
-	if (setsockopt(socketThis, SOL_SOCKET, SO_REUSEADDR, (char*)&enable, sizeof(int)) < 0)
-		printf("setsockOpt create socket : %d", WSAGetLastError());
 
 	InitializeThreads();
 }
 void Network::InitializeServer()
 {
-	localConnection.socketAddr.sin_addr.s_addr = INADDR_ANY;
+	localConnection.socketAddr.sin_port = htons(port);
 	if (bind(socketThis, (struct sockaddr *)&localConnection.socketAddr, sizeof(localConnection.socketAddr)) == SOCKET_ERROR)
 	{
 		printf("Bind failed with error code : %d", WSAGetLastError());
@@ -65,7 +60,21 @@ void Network::InitializeServer()
 }
 void Network::InitializeClient()
 {
-	localConnection.socketAddr.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
+	//Set local parameters
+	localConnection.socketAddr.sin_port = htons(0);
+
+	//Create server connection
+	struct sockaddr_in remoteAddr;
+	memset((char *)&remoteAddr, 0, sizeof(remoteAddr));
+	remoteAddr.sin_family = AF_INET;
+	remoteAddr.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
+	remoteAddr.sin_port = htons(port);
+
+	//Add server connection to list
+	Connection *server = new Connection(this);
+	server->socketAddr = remoteAddr;
+	connections.push_back(server);
+
 	if (bind(socketThis, (struct sockaddr *)&localConnection.socketAddr, sizeof(localConnection.socketAddr)) == SOCKET_ERROR)
 	{
 		printf("Bind failed with error code : %d", WSAGetLastError());
@@ -81,7 +90,7 @@ void Network::InitializeThreads()
 }
 void Network::ReceiveThread()
 {
-	struct sockaddr_in socketAddrOther; //= localConnection.socketAddr;
+	struct sockaddr_in socketAddrOther;
 	memset((char *)&socketAddrOther, 0, sizeof(socketAddrOther));
 	int socketAddrLength = sizeof(socketAddrOther);
 	char buf[BUFLEN];
@@ -93,7 +102,17 @@ void Network::ReceiveThread()
 		{
 			printf("recvfrom() failed with error code : %d\n", WSAGetLastError());
 		}
-		else{
+		else{ 
+			u_short tempPort = ntohs(socketAddrOther.sin_port);
+			std::string portString = std::to_string(tempPort);
+			char *tempIP = inet_ntoa(socketAddrOther.sin_addr);
+			if (findConnection(ip, portString))
+			{
+				//Do something with received client
+				Connection *conn = new Connection(this);
+				conn->socketAddr = socketAddrOther;
+				connections.push_back(conn);
+			}
 			std::cout << "Message received: " << buf << std::endl;
 		}
 
@@ -127,25 +146,20 @@ void Network::SendThread()
 }
 Connection *Network::findConnection(std::string ip,std::string port)
 {
-	auto it = connections.find(ip+":"+port);
-	if (it != connections.end())
+	for (int i = 0; i < connections.size(); i++)
 	{
-		return &it->second;
+		if (connections[i]->getIp().compare(ip) && std::to_string(connections[i]->getPort()).compare(port))
+		{
+			return connections[i];
+		}
 	}
 	return nullptr;
 }
-void Network::Send(Packet *packet,...)
+void Network::Send(Connection *connection,std::string data)
 {
-	va_list argList;
-
-	va_start(argList, packet);
-	std::string data = packet->toString(packet, argList);
-	va_end(argList);
-
-
 	PacketData packetData;
 	packetData.data = data;
-	packetData.connection = &localConnection;
+	packetData.connection = connection;
 	//Mutex protected push
 	outDataMutex.lock();
 	outData.push_back(packetData);

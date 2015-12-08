@@ -3,10 +3,11 @@
 #include <iostream>
 #include <string>
 #include <thread>
-#include "Network\CoordinatePacket.h"
+#include "CoordinatePacket.h"
 #include "Game\SceneSys.h"
 #include "Game\MainMenu.h"
 #include "Timer.h"
+#include "Connection.h"
 void NetworkThread();
 int main()
 {
@@ -47,7 +48,7 @@ void NetworkThread()
 {
 	Network network("127.0.0.1", 8888,false);
 	CoordinatePacket *packet = new CoordinatePacket();
-	network.Send(packet, 555, 555);
+	network.getConnections()->at(0)->Send(packet, 555, 555);
 	while (true)
 	{
 		std::cout << " Give a message: " << std::endl;
