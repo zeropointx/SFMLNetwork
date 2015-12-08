@@ -18,6 +18,7 @@ Network::Network(std::string ip, unsigned short port, bool server)
 Network::~Network()
 {
 	threadsRunning = false;
+	closesocket(socketThis);
 }
 void Network::Initialize()
 {
@@ -28,24 +29,34 @@ void Network::Initialize()
 		exit(EXIT_FAILURE);
 	}
 
-	if ((socketThis = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == INVALID_SOCKET)
+	if ((socketThis = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR)
 	{
 		printf("Could not create socket : %d", WSAGetLastError());
 		exit(EXIT_FAILURE);
 	}
 	threadsRunning = true;
+
+	memset((char *)&localConnection.socketAddr, 0, sizeof(localConnection.socketAddr));
+	localConnection.socketAddr.sin_family = AF_INET;
+	localConnection.socketAddr.sin_port = htons(port);
+
 	if (server)
+	{
 		InitializeServer();
+	}
 	else
+	{
 		InitializeClient();
+	}
+	int enable = 1;
+	if (setsockopt(socketThis, SOL_SOCKET, SO_REUSEADDR, (char*)&enable, sizeof(int)) < 0)
+		printf("setsockOpt create socket : %d", WSAGetLastError());
+
 	InitializeThreads();
 }
 void Network::InitializeServer()
 {
-	localConnection.socketAddr.sin_family = AF_INET;
 	localConnection.socketAddr.sin_addr.s_addr = INADDR_ANY;
-	localConnection.socketAddr.sin_port = htons(port);
-
 	if (bind(socketThis, (struct sockaddr *)&localConnection.socketAddr, sizeof(localConnection.socketAddr)) == SOCKET_ERROR)
 	{
 		printf("Bind failed with error code : %d", WSAGetLastError());
@@ -54,27 +65,30 @@ void Network::InitializeServer()
 }
 void Network::InitializeClient()
 {
-	memset((char *)&localConnection.socketAddr, 0, sizeof(localConnection.socketAddr));
-	localConnection.socketAddr.sin_family = AF_INET;
-	localConnection.socketAddr.sin_port = htons(port);
 	localConnection.socketAddr.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
-	
+	if (bind(socketThis, (struct sockaddr *)&localConnection.socketAddr, sizeof(localConnection.socketAddr)) == SOCKET_ERROR)
+	{
+		printf("Bind failed with error code : %d", WSAGetLastError());
+		exit(EXIT_FAILURE);
+	}
 }
 void Network::InitializeThreads()
 {
-	//std::thread receive(&Network::ReceiveThread, this);
-	//receive.detach();
+	std::thread receive(&Network::ReceiveThread, this);
+	receive.detach();
 	std::thread send(&Network::SendThread, this);
 	send.detach();
 }
 void Network::ReceiveThread()
 {
-	struct sockaddr_in socketAddrOther;
+	struct sockaddr_in socketAddrOther; //= localConnection.socketAddr;
+	memset((char *)&socketAddrOther, 0, sizeof(socketAddrOther));
 	int socketAddrLength = sizeof(socketAddrOther);
 	char buf[BUFLEN];
 	while (threadsRunning)
 	{
 		memset(buf, '\0', BUFLEN);
+
 		if (recvfrom(socketThis, buf, BUFLEN, 0, (struct sockaddr *) &socketAddrOther, &socketAddrLength) == SOCKET_ERROR)
 		{
 			printf("recvfrom() failed with error code : %d\n", WSAGetLastError());
@@ -124,11 +138,11 @@ void Network::Send(Packet *packet,...)
 {
 	va_list argList;
 
-
-
 	va_start(argList, packet);
 	std::string data = packet->toString(packet, argList);
 	va_end(argList);
+
+
 	PacketData packetData;
 	packetData.data = data;
 	packetData.connection = &localConnection;

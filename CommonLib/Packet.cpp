@@ -47,7 +47,6 @@ size_t Packet::getSize(VariableType type)
 std::string Packet::toString(Packet *packet,va_list argumentList)
 {
 	std::ostringstream oss;
-	int index = 0;
 	oss<<packetId;
 	for (auto it = variableTypes.begin(); it != variableTypes.end(); it++)
 	{ 

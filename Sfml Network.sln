@@ -16,6 +16,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommonLib", "CommonLib\CommonLib.vcxproj", "{7D0A34D4-A578-4667-BED8-084B60655D7A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dedicated Server", "Dedicated Server\Dedicated Server.vcxproj", "{67F85A7F-EFC8-48B3-9FD4-56F55B529015}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4713B5AE-28C0-4930-BBC1-FFF4CB2503C6} = {4713B5AE-28C0-4930-BBC1-FFF4CB2503C6}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

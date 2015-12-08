@@ -45,7 +45,6 @@ int main()
 }
 void NetworkThread()
 {
-	
 	Network network("127.0.0.1", 8888,false);
 	CoordinatePacket *packet = new CoordinatePacket();
 	network.Send(packet, 555, 555);
