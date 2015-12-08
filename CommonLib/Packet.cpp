@@ -1,7 +1,7 @@
 #include "Packet.h"
 #include <assert.h>
 #include <stdio.h>
-
+#include<winsock2.h>
 #include <sstream>
 Packet::Packet(std::vector<VariableType> variableTypes)
 {
@@ -46,31 +46,51 @@ size_t Packet::getSize(VariableType type)
 }
 std::string Packet::toString(Packet *packet,va_list argumentList)
 {
-	std::ostringstream oss;
-	oss<<packetId;
+	char *p;
+	if (sizeType != VAR)
+		p = (char*)malloc(size);
+//	std::ostringstream oss;
+	//oss<<packetId;
+	int index = 0;
 	for (auto it = variableTypes.begin(); it != variableTypes.end(); it++)
 	{ 
 		switch ((*it))
 		{
-		case UINT:
-			oss<<va_arg(argumentList, unsigned int);
-			continue;
-		case INT:
-		{
-			int number = va_arg(argumentList, int);
-			oss << number;
-			continue;
-		}
-		case STRING:
-			oss << va_arg(argumentList, std::string);
-			continue;
-		case CHAR:
-			oss << va_arg(argumentList, char);
-			continue;
-		default:
-			assert(false);
+			case UINT:
+			{
+				u_long number = htonl(va_arg(argumentList, unsigned int));
+				*((int *)(&p[index])) = number;
+				index += sizeof(unsigned int);
+				continue;
+			}
+			case INT:
+			{
+				u_long number = htonl(va_arg(argumentList, int));
+				*((int *)(&p[index])) = number;
+				index += sizeof(int);
+				continue;
+			}
+			case STRING:
+			{
+				std::string stringuli = va_arg(argumentList, std::string);
+				
+				strcpy(&p[index], stringuli.c_str());
+				index += (stringuli.length() + 1) * sizeof(char);
+				continue;
+			}
+			case CHAR:
+			{
+				char charred = va_arg(argumentList, char);
+				*((char *)(&p[index])) = charred;
+				index += sizeof(char);
+				continue;
+			}
+			default:
+			{
+				assert(false);
+			}
 		}
 		
 	}
-	return oss.str();
+	return std::string(p);
 }
