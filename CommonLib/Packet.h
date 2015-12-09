@@ -23,6 +23,7 @@ public:
 	~Packet();
 	size_t getSize();
 	std::string toString(Packet *packet,va_list argumentList);
+	std::vector<std::string> deSerialize(std::string data);
 protected:
 	unsigned int packetId;
 	size_t size;

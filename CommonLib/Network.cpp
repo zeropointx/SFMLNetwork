@@ -106,13 +106,18 @@ void Network::ReceiveThread()
 			u_short tempPort = ntohs(socketAddrOther.sin_port);
 			std::string portString = std::to_string(tempPort);
 			char *tempIP = inet_ntoa(socketAddrOther.sin_addr);
+			Connection *conn = new Connection(this);
+			conn->socketAddr = socketAddrOther;
 			if (findConnection(ip, portString) == nullptr)
 			{
 				//Do something with received client
-				Connection *conn = new Connection(this);
-				conn->socketAddr = socketAddrOther;
+
 				connections.push_back(conn);
 			}
+			PacketData pdata;
+			pdata.connection = conn;
+			pdata.data = std::string(&buf[0],&buf[BUFLEN-1]);
+			inData.push_back(pdata);
 			std::cout << "Message received: " << buf << std::endl;
 		}
 

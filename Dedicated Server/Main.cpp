@@ -10,7 +10,7 @@ int main()
 	{
 		i++;
 		auto connections = network->getConnections();
-		if (i % 1000000000 == 0)
+		if (i % 100000000 == 0)
 			connections->at(0)->Send(packet, 555, 555);
 	}
 }
