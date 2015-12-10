@@ -79,17 +79,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\MainMenu.cpp" />
+    <ClCompile Include="Game\SceneParent.cpp" />
+    <ClCompile Include="Game\SceneSys.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SceneParent.cpp" />
-    <ClCompile Include="SceneSys.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Game\MainMenu.h" />
+    <ClInclude Include="Game\SceneParent.h" />
+    <ClInclude Include="Game\SceneSys.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="SceneParent.h" />
-    <ClInclude Include="SceneSys.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

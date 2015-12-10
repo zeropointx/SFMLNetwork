@@ -1,10 +1,10 @@
 #pragma once
-class RenderWindow;
+#include "SFML\Graphics.hpp"
 class SceneParent
 {
 
 public:
-	SceneParent(RenderWindow *WINDOW);
+	SceneParent(sf::RenderWindow *WINDOW);
 	SceneParent(void);
 	virtual ~SceneParent(void);
 	bool _paused;
@@ -12,6 +12,6 @@ public:
 	virtual void Draw(){};
 	virtual void Start(){};
 protected:
- RenderWindow *_window;
+ sf::RenderWindow *_window;
 };
 

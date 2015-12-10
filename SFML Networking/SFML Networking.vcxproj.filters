@@ -27,13 +27,13 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainMenu.cpp">
+    <ClCompile Include="Game\MainMenu.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="SceneParent.cpp">
+    <ClCompile Include="Game\SceneSys.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="SceneSys.cpp">
+    <ClCompile Include="Game\SceneParent.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,13 +41,13 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainMenu.h">
+    <ClInclude Include="Game\MainMenu.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="SceneParent.h">
+    <ClInclude Include="Game\SceneSys.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="SceneSys.h">
+    <ClInclude Include="Game\SceneParent.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>

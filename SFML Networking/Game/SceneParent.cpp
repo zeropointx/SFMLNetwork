@@ -1,7 +1,7 @@
 #include "SceneParent.h"
 #include <iostream>
-#include "SFML\Graphics.hpp"
-SceneParent::SceneParent(RenderWindow *WINDOW)
+
+SceneParent::SceneParent(sf::RenderWindow *WINDOW)
 {
 	_window = WINDOW;
 	_paused = false;

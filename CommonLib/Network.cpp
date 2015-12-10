@@ -97,8 +97,8 @@ void Network::ReceiveThread()
 	while (threadsRunning)
 	{
 		memset(buf, '\0', BUFLEN);
-
-		if (recvfrom(socketThis, buf, BUFLEN, 0, (struct sockaddr *) &socketAddrOther, &socketAddrLength) == SOCKET_ERROR)
+		int dataCountReceived;
+		if ( (dataCountReceived = recvfrom(socketThis, buf, BUFLEN, 0, (struct sockaddr *) &socketAddrOther, &socketAddrLength)) == SOCKET_ERROR)
 		{
 			printf("recvfrom() failed with error code : %d\n", WSAGetLastError());
 		}
@@ -116,7 +116,7 @@ void Network::ReceiveThread()
 			}
 			PacketData pdata;
 			pdata.connection = conn;
-			pdata.data = std::string(&buf[0],&buf[BUFLEN-1]);
+			pdata.data = std::string(&buf[0],&buf[dataCountReceived]);
 			inData.push_back(pdata);
 			std::cout << "Message received: " << buf << std::endl;
 		}
