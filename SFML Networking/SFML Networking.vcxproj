@@ -79,16 +79,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CommandHandler.cpp" />
+    <ClCompile Include="Game\GameScene.cpp" />
     <ClCompile Include="Game\MainMenu.cpp" />
     <ClCompile Include="Game\SceneParent.cpp" />
     <ClCompile Include="Game\SceneSys.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommandHandler.h" />
+    <ClInclude Include="Game\GameScene.h" />
     <ClInclude Include="Game\MainMenu.h" />
     <ClInclude Include="Game\SceneParent.h" />
     <ClInclude Include="Game\SceneSys.h" />
+    <ClInclude Include="Mouse.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,15 +3,12 @@
 vector<SceneParent*> SceneSys::scenes;
 	static bool sceneChanged = false;
 
-SceneParent SceneSys::GetScene(int p)
+SceneParent *SceneSys::GetScene(int p)
       {
-		  int n = 0;
-		   for (vector<SceneParent*>::iterator i; i != scenes.end(); i++)
-          {
-			  if(n == p)
-				  return **i;
-			  n++;
-		   }
+		if (p >= scenes.size())
+		return nullptr;
+
+		return scenes[p];
       }
 void SceneSys::ChangeScene(SceneParent *scene)
       {

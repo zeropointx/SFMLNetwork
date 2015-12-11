@@ -7,7 +7,7 @@ using namespace std;
 class SceneSys
 {
 public:
-	static SceneParent GetScene(int p);
+	static SceneParent *GetScene(int p);
 	static void ChangeScene(SceneParent *scene);
 	 static void OpenScene(SceneParent *scene);
 	static void Update(float dT);

@@ -1,5 +1,8 @@
 #include "MainMenu.h"
 #include <iostream>
+#include "..\Mouse.h"
+#include "GameScene.h"
+#include "SceneSys.h"
 MainMenu::MainMenu(sf::RenderWindow *window) : SceneParent(window)
 {
 	toniplz = sf::RectangleShape(sf::Vector2f(100, 100));
@@ -26,10 +29,12 @@ void MainMenu::Update(float dt)
 	sf::Rect<float> rect = sf::Rect<float>(pos.x - orig.x, pos.y -orig.y,size.x ,size.y );
 	sf::Vector2i mousePos = sf::Mouse::getPosition(*_window);
 	sf::Vector2<float> mousePos_VITTU_CONVERTED_KOSKA_PASKA_SFML = sf::Vector2<float>(mousePos.x, mousePos.y);
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if (core::Mouse::getLeftClickState() == core::Mouse::DOWN)
 	{
 		if (rect.contains(mousePos_VITTU_CONVERTED_KOSKA_PASKA_SFML))
 		{
+			GameScene *gameScene = new GameScene("127.0.0.1", 8888,_window);
+			SceneSys::ChangeScene(gameScene);
 			std::cout << "Olen passi" << std::endl;
 		}
 	}

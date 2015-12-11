@@ -10,6 +10,8 @@ Network::Network(std::string ip, unsigned short port, bool server) : localConnec
 	this->ip = ip;
 	this->port = port; 
 	this->server = server;
+	send_delay = 0.001f;
+	receive_delay = 0.001f;
 	Initialize();
 }
 
@@ -94,33 +96,39 @@ void Network::ReceiveThread()
 	memset((char *)&socketAddrOther, 0, sizeof(socketAddrOther));
 	int socketAddrLength = sizeof(socketAddrOther);
 	char buf[BUFLEN];
+	receiveTimer.start();
 	while (threadsRunning)
 	{
-		memset(buf, '\0', BUFLEN);
-		int dataCountReceived;
-		if ( (dataCountReceived = recvfrom(socketThis, buf, BUFLEN, 0, (struct sockaddr *) &socketAddrOther, &socketAddrLength)) == SOCKET_ERROR)
+		if (receiveTimer.getCurrentTimeSeconds() >= receive_delay)
 		{
-			printf("recvfrom() failed with error code : %d\n", WSAGetLastError());
-		}
-		else{ 
-			u_short tempPort = ntohs(socketAddrOther.sin_port);
-			std::string portString = std::to_string(tempPort);
-			char *tempIP = inet_ntoa(socketAddrOther.sin_addr);
-			Connection *conn = new Connection(this);
-			conn->socketAddr = socketAddrOther;
-			if (findConnection(ip, portString) == nullptr)
+			memset(buf, '\0', BUFLEN);
+			int dataCountReceived;
+			if ((dataCountReceived = recvfrom(socketThis, buf, BUFLEN, 0, (struct sockaddr *) &socketAddrOther, &socketAddrLength)) == SOCKET_ERROR)
 			{
-				//Do something with received client
-
-				connections.push_back(conn);
+				printf("recvfrom() failed with error code : %d\n", WSAGetLastError());
 			}
-			PacketData pdata;
-			pdata.connection = conn;
-			pdata.data = std::string(&buf[0],&buf[dataCountReceived]);
-			inData.push_back(pdata);
-			std::cout << "Message received: " << buf << std::endl;
-		}
+			else{
+				inDataMutex.lock();
+				u_short tempPort = ntohs(socketAddrOther.sin_port);
+				std::string portString = std::to_string(tempPort);
+				char *tempIP = inet_ntoa(socketAddrOther.sin_addr);
+				Connection *conn = new Connection(this);
+				conn->socketAddr = socketAddrOther;
+				if (findConnection(ip, portString) == nullptr)
+				{
+					//Do something with received client
 
+					connections.push_back(conn);
+				}
+				PacketData pdata;
+				pdata.connection = conn;
+				pdata.data = std::string(&buf[0], &buf[dataCountReceived]);
+				inData.push_back(pdata);
+				std::cout << "Message received: " << buf << std::endl;
+				inDataMutex.unlock();
+			}
+			receiveTimer.start();
+		}
 	}
 }
 void Network::SendThread()
@@ -128,7 +136,7 @@ void Network::SendThread()
 	sendTimer.start();
 	while (threadsRunning)
 	{
-		if (sendTimer.getCurrentTimeSeconds() >= SEND_DELAY)
+		if (sendTimer.getCurrentTimeSeconds() >= send_delay)
 		{
 			outDataMutex.lock();
 			while (outData.size() > 0)
@@ -169,4 +177,12 @@ void Network::Send(Connection *connection,std::string data)
 	outDataMutex.lock();
 	outData.push_back(packetData);
 	outDataMutex.unlock();
+}
+void Network::setSendDelay(float newDelay)
+{
+	send_delay = newDelay;
+}
+void Network::setReceiveDelay(float newDelay)
+{
+	receive_delay = newDelay;
 }

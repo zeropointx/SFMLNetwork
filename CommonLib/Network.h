@@ -7,9 +7,8 @@
 #include "Connection.h"
 #include <vector>
 #include "Packet.h"
+#include "PacketHandler.h"
 #define BUFLEN 512  //Max length of buffer
-#define SEND_DELAY 0.001f
-#define RECEIVE_DELAY 0.001f
 class Network
 {
 	struct PacketData
@@ -18,6 +17,7 @@ class Network
 		Connection *connection;
 	 };
 	friend class Connection;
+	friend class CommandHandler;
 public:
 	Network(std::string ip, unsigned short port, bool server);
 	~Network();
@@ -25,7 +25,12 @@ public:
 
 	Connection localConnection;
 	std::vector<Connection*> *getConnections(){ return &connections; }
+	void setSendDelay(float newDelay);
+	void setReceiveDelay(float newDelay);
 private:
+	PacketHandler packetHandler;
+	float send_delay;
+	float receive_delay;
 	void Send(Connection *connection, std::string data);
 	void InitializeServer();
 	void InitializeClient();

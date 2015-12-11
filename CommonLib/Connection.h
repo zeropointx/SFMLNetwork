@@ -8,7 +8,6 @@ class Network;
 class Connection
 {
 	friend class Network;
-
 	enum State
 	{
 		CONNECTED,
