@@ -1,5 +1,6 @@
 #pragma once
 #include "Network.h"
+#include "PlayerData.h"
 class Server
 {
 	
@@ -9,9 +10,11 @@ public:
 	Server(unsigned short port);
 	~Server();
 	static Server* serverInstance;
-private:
-
-	unsigned short port;
 	Network *network;
+	void Update();
+private:
+	std::vector<PlayerData> players;
+	unsigned short port;
+
 };
 

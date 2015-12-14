@@ -53,4 +53,8 @@ void CommandHandler::handleCommand(std::vector<std::string> command)
 		float delay = std::stof(command[1]);
 		server->network->setReceiveDelay(delay);
 	}
+	else if (strcmp(command[0].c_str(), "returnPackets") == 0)
+	{
+
+	}
 }

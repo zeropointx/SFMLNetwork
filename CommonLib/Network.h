@@ -18,6 +18,7 @@ class Network
 	 };
 	friend class Connection;
 	friend class CommandHandler;
+	friend class PacketHandler;
 public:
 	Network(std::string ip, unsigned short port, bool server);
 	~Network();
@@ -27,8 +28,14 @@ public:
 	std::vector<Connection*> *getConnections(){ return &connections; }
 	void setSendDelay(float newDelay);
 	void setReceiveDelay(float newDelay);
+	std::vector<Connection*> *getNewConnections(){ return &newConnections; }
+
+
+
+	PacketHandler *getPacketHandler(){ return packetHandler; };
 private:
-	PacketHandler packetHandler;
+	std::vector<Connection*> newConnections;
+	PacketHandler *packetHandler;
 	float send_delay;
 	float receive_delay;
 	void Send(Connection *connection, std::string data);

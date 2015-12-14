@@ -1,11 +1,12 @@
 #include "GameScene.h"
 #include "CoordinatePacket.h"
-
+#include "ClientStatePacket.h"
 GameScene::GameScene(std::string ip, unsigned short port, sf::RenderWindow *window): SceneParent(window)
 {
 	network = new Network(ip, port, false);
-	CoordinatePacket *packet = new CoordinatePacket();
-	network->getConnections()->at(0)->Send(packet, 555, 555);
+	
+	ClientStatePacket *clientState = new ClientStatePacket();
+	network->getConnections()->at(0)->Send(clientState, ClientStatePacket::LOGIN);
 
 	background = new sf::RectangleShape();
 	sf::Vector2f windowSize = sf::Vector2f(window->getSize().x, window->getSize().y);

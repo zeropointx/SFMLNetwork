@@ -7,6 +7,7 @@
 #include<iostream>
 Network::Network(std::string ip, unsigned short port, bool server) : localConnection(this)
 {
+	packetHandler = new PacketHandler(this);
 	this->ip = ip;
 	this->port = port; 
 	this->server = server;
@@ -20,6 +21,7 @@ Network::~Network()
 {
 	threadsRunning = false;
 	closesocket(socketThis);
+	delete packetHandler;
 }
 void Network::Initialize()
 {
@@ -119,6 +121,7 @@ void Network::ReceiveThread()
 					//Do something with received client
 
 					connections.push_back(conn);
+					newConnections.push_back(conn);
 				}
 				PacketData pdata;
 				pdata.connection = conn;

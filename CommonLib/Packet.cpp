@@ -118,6 +118,12 @@ std::vector<std::string> Packet::deSerialize(std::string data)
 {
 	std::vector<std::string> returnVector;
 	int index = 0;
+	/*
+	
+	First handle packetId
+	*
+	*/
+	index += sizeof(u_long);
 
 	for (auto it = variableTypes.begin(); it != variableTypes.end(); it++)
 	{
@@ -132,11 +138,8 @@ std::vector<std::string> Packet::deSerialize(std::string data)
 				//Put that long in there
 				*((u_long *)(&p[index])) = number;
 				//and conver it back to string
-				std::string intString;
-				for (int i = 0; i < sizeof(u_long); i++)
-				{
-					intString += p[i];
-				}
+				std::string intString(&p[index], &p[index + 4]);
+				intString = std::string(intString.rbegin(), intString.rend());
 				//And push back
 				returnVector.push_back(intString);
 
@@ -152,11 +155,8 @@ std::vector<std::string> Packet::deSerialize(std::string data)
 				//Put that long in there
 				*((u_long *)(&p[index])) = number;
 				//and conver it back to string
-				std::string intString;
-				for (int i = 0; i < sizeof(u_long); i++)
-				{
-					intString += p[i];
-				}
+				std::string intString(&p[index],&p[index+4]);
+				intString = std::string(intString.rbegin(), intString.rend());
 				//And push back
 				returnVector.push_back(intString);
 
@@ -196,4 +196,8 @@ std::vector<std::string> Packet::deSerialize(std::string data)
 
 	}
 	return returnVector;
+}
+int Packet::getId()
+{
+	return packetId;
 }
