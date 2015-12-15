@@ -11,8 +11,8 @@ Network::Network(std::string ip, unsigned short port, bool server) : localConnec
 	this->ip = ip;
 	this->port = port; 
 	this->server = server;
-	send_delay = 0.001f;
-	receive_delay = 0.001f;
+	send_delay = 0.000f;
+	receive_delay = 0.000f;
 	Initialize();
 }
 
@@ -127,7 +127,7 @@ void Network::ReceiveThread()
 				pdata.connection = conn;
 				pdata.data = std::string(&buf[0], &buf[dataCountReceived]);
 				inData.push_back(pdata);
-				std::cout << "Message received: " << buf << std::endl;
+			//	std::cout << "Message received: " << buf << std::endl;
 				inDataMutex.unlock();
 			}
 			receiveTimer.start();
@@ -162,9 +162,16 @@ void Network::SendThread()
 }
 Connection *Network::findConnection(std::string ip,std::string port)
 {
+
+	std::string playerString = ip + ":" + port;
+
+		
+
+
 	for (int i = 0; i < connections.size(); i++)
 	{
-		if (connections[i]->getIp().compare(ip) && std::to_string(connections[i]->getPort()).compare(port))
+		std::string anotherPlayerString = connections[i]->getIp() + ":" + std::to_string(connections[i]->getPort());
+		if (strcmp(playerString.c_str(), anotherPlayerString.c_str()) == 0)
 		{
 			return connections[i];
 		}

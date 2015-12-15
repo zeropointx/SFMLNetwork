@@ -35,7 +35,6 @@ void MainMenu::Update(float dt)
 		{
 			GameScene *gameScene = new GameScene("127.0.0.1", 8888,_window);
 			SceneSys::ChangeScene(gameScene);
-			std::cout << "Olen passi" << std::endl;
 		}
 	}
 	

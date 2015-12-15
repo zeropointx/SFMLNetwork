@@ -22,7 +22,7 @@ std::vector<PacketHandler::PacketData> PacketHandler::getPacketData()
 		PacketHandler::PacketData packetData;
 		std::string data = network->inData[i].data;
 		std::vector<std::string> packetStrings;
-		u_long number = *((u_long*)(&data.c_str()[0]));
+		u_long number = ntohl(*((u_long*)(&data.c_str()[0])));
 		for (int j = 0; j < packetTemplates.size(); j++)
 		{
 			if (number == packetTemplates[j]->packetId)

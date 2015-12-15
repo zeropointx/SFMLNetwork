@@ -1,16 +1,23 @@
 #include "GameScene.h"
-#include "CoordinatePacket.h"
-#include "ClientStatePacket.h"
+
+#include "Utility.h"
 GameScene::GameScene(std::string ip, unsigned short port, sf::RenderWindow *window): SceneParent(window)
 {
 	network = new Network(ip, port, false);
 	
-	ClientStatePacket *clientState = new ClientStatePacket();
+	clientState = new ClientStatePacket();
+	initPlayer = new InitializePlayerPacket();
+	coordPacket = new CoordinatePacket();
+	network->getPacketHandler()->addPacketTemplate(initPlayer);
+	network->getPacketHandler()->addPacketTemplate(clientState);
+	network->getPacketHandler()->addPacketTemplate(coordPacket);
 	network->getConnections()->at(0)->Send(clientState, ClientStatePacket::LOGIN);
 
 	background = new sf::RectangleShape();
 	sf::Vector2f windowSize = sf::Vector2f(window->getSize().x, window->getSize().y);
 	setTexture("background_doge.jpg", background, windowSize);
+	sendDelay = 0.1f;
+	sendTimer.start();
 }
 
 
@@ -19,11 +26,75 @@ GameScene::~GameScene()
 }
 void GameScene::Update(float dt)
 {
-
+	auto data = network->getPacketHandler()->getPacketData();
+	for (int i = 0; i < data.size(); i++)
+	{
+		if (data[i].packet->getId() == initPlayer->getId())
+		{
+			Player p;
+			p.conn = data[i].conn;
+			p.pData.id = Utility::networkToUlong(data[i].packetData[0]);
+			p.pData.x = Utility::networkToUlong(data[i].packetData[1]);
+			p.pData.y = Utility::networkToUlong(data[i].packetData[2]);
+			p.circle = new sf::RectangleShape();
+			setTexture("doge.jpg", p.circle, sf::Vector2f(100, 100));
+			players.push_back(p);
+		}
+		else if (data[i].packet->getId() == clientState->getId())
+		{
+			myId = Utility::networkToUlong(data[i].packetData[0]);
+		}
+		else if (data[i].packet->getId() == coordPacket->getId())
+		{
+			int id = Utility::networkToUlong(data[i].packetData[0]);
+			int x = Utility::networkToUlong(data[i].packetData[1]);
+			int y = Utility::networkToUlong(data[i].packetData[2]);
+			for (int j = 0; j < players.size(); j++)
+			{
+				if (players[j].pData.id == id)
+				{
+					if (x == 2)
+						x = -1;
+					if (y == 2)
+						y = -1;
+					players[j].pData.x += (x * 10.1f);
+					players[j].pData.y += (y * 10.1f);
+				}
+			}
+		}
+	}
+	if (sendTimer.getCurrentTimeSeconds() < sendDelay)
+		return;
+	sendTimer.start();
+	int x = 0, y = 0;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		x = 1;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		x = 2;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		y = 2;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		y = 1;
+	}
+	if (!(x == 0 && y == 0))
+		network->getConnections()->at(0)->Send(coordPacket, myId, x, y);
 }
 void GameScene::Draw()
 {
 	_window->draw(*background);
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i].circle->setPosition((float)players[i].pData.x, (float)players[i].pData.y);
+		_window->draw(*players[i].circle);
+	}
+
 }
 void GameScene::Start()
 {

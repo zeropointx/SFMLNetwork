@@ -1,11 +1,16 @@
 #pragma once
 #include "Network.h"
 #include "PlayerData.h"
+#include "CoordinatePacket.h"
 class Server
 {
 	
 	friend class CommandHandler;
 public:
+	struct Player{
+		PlayerData pdata;
+		Connection *conn;
+	};
 	static Server* getServer();
 	Server(unsigned short port);
 	~Server();
@@ -13,7 +18,8 @@ public:
 	Network *network;
 	void Update();
 private:
-	std::vector<PlayerData> players;
+	CoordinatePacket *coordPacket;
+	std::vector<Player> players;
 	unsigned short port;
 
 };

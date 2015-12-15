@@ -4,8 +4,8 @@ class PlayerData
 public:
 	PlayerData();
 	~PlayerData();
-	int x;
-	int y;
+	float x;
+	float y;
 	int id;
 private:
 	static int currentId;
