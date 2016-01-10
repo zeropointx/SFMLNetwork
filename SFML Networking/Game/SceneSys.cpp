@@ -2,6 +2,7 @@
 #include <iostream>
 vector<SceneParent*> SceneSys::scenes;
 	static bool sceneChanged = false;
+	Timer SceneSys::fps;
 
 SceneParent *SceneSys::GetScene(int p)
       {
@@ -31,11 +32,15 @@ void SceneSys::OpenScene(SceneParent *scene)
 }
 void SceneSys::Update(float dT)
       {
+	
 		  for (vector<SceneParent*>::iterator i = scenes.begin(); i != scenes.end(); i++)
           {
               if (!(*i)->_paused)
               {
+				 // std::cout << "dt: " << fps.getCurrentTimeSeconds() << std::endl;
+				 
                  (*i)->Update(dT);
+				 fps.start();
                   if (sceneChanged)
                   {
                       sceneChanged = false;

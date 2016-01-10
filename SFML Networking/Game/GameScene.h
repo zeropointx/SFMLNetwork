@@ -16,6 +16,7 @@ public:
 		PlayerData pData;
 		Connection *conn;
 		sf::RectangleShape *circle;
+		sf::Vector2f targetPos;
 	};
 	GameScene(std::string ip, unsigned short port, sf::RenderWindow *window);
 	~GameScene();
@@ -23,6 +24,7 @@ public:
 	void Draw();
 	void Start();
 private:
+	sf::Vector2f Lerp(sf::Vector2f start, sf::Vector2f end, float percent);
 	float sendDelay;
 	Timer sendTimer;
 	int myId;

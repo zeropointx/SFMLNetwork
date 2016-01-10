@@ -2,6 +2,7 @@
 #include "SFML\Graphics.hpp"
 #include "SceneParent.h"
 #include <vector>
+#include "Timer.h"
 using namespace sf;
 using namespace std;
 class SceneSys
@@ -16,6 +17,6 @@ public:
 	 static void Draw();
 private:
 	static vector<SceneParent*> scenes;
-
+	static Timer fps;
 };
 

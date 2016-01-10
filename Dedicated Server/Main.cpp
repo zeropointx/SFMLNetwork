@@ -13,8 +13,9 @@
 int main()
 {
 	std::cout << "Give port:" << std::endl;
-	std::string port;
-	getline(std::cin, port);
+	std::string port = "8888";
+//	getline(std::cin, port);
+	
 	int number = stoi(port);
 	Server server(stoi(port));
 	CommandHandler commandHandler;

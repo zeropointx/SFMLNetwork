@@ -19,6 +19,7 @@ int main()
 
 	sf::Vector2f desktopRes= sf::Vector2f(VideoMode::getDesktopMode().width, VideoMode::getDesktopMode().height);
 	sf::RenderWindow window(sf::VideoMode(desktopRes.x/2, desktopRes.y/2), "SFML works!");
+	window.setFramerateLimit(60);
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
 	SceneSys::ChangeScene(new MainMenu(&window));
