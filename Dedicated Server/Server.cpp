@@ -9,6 +9,7 @@ Server::Server(unsigned short port)
 	this->port = port;
 	network = new Network("127.0.0.1", port, true);
 	coordPacket = new CoordinatePacket();
+	initPlayerPacket = new InitializePlayerPacket();
 }
 
 
@@ -23,7 +24,6 @@ void Server::Update()
 {
 	ClientStatePacket packet;
 
-	InitializePlayerPacket *initPlayerPacket = new InitializePlayerPacket();
 	std::vector<Connection*> *newconnections =network->getNewConnections();
 	std::vector<Connection*> *connections =network->getConnections();
 	if (newconnections->size() > 0)
@@ -35,6 +35,10 @@ void Server::Update()
 			player.conn = newconnections->at(i);
 			
 			newconnections->at(i)->Send(&packet, player.pdata.id);
+			for (int j = 0; j < players.size(); j++)
+			{
+				newconnections->at(i)->Send(initPlayerPacket, players[j].pdata.id, players[j].pdata.x, players[j].pdata.y);
+			}
 				players.push_back(player);
 			
 		}
@@ -76,8 +80,8 @@ void Server::Update()
 		if (data[i].packet->getId() == coordPacket->getId())
 		{
 			int id = Utility::networkToUlong(data[i].packetData[0]);
-			int x = (int)Utility::networkToUlong(data[i].packetData[1]);
-			int y = (int)Utility::networkToUlong(data[i].packetData[2]);
+			int x = Utility::networkToUlong(data[i].packetData[1]);
+			int y = Utility::networkToUlong(data[i].packetData[2]);
 			for (int j = 0; j < network->getConnections()->size(); j++)
 			{
 
@@ -88,5 +92,4 @@ void Server::Update()
 			}
 		}
 	}
-	
 }

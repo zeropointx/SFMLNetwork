@@ -162,12 +162,7 @@ void Network::SendThread()
 }
 Connection *Network::findConnection(std::string ip,std::string port)
 {
-
 	std::string playerString = ip + ":" + port;
-
-		
-
-
 	for (int i = 0; i < connections.size(); i++)
 	{
 		std::string anotherPlayerString = connections[i]->getIp() + ":" + std::to_string(connections[i]->getPort());

@@ -67,19 +67,19 @@ void GameScene::Update(float dt)
 		return;
 	sendTimer.start();
 	int x = 0, y = 0;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	if (_window->hasFocus() && sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
 		x = 1;
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	else if (_window->hasFocus() && sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
 		x = 2;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	if (_window->hasFocus() && sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
 		y = 2;
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	else if (_window->hasFocus() && sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
 		y = 1;
 	}

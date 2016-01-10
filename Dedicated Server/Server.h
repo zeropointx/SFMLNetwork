@@ -2,6 +2,7 @@
 #include "Network.h"
 #include "PlayerData.h"
 #include "CoordinatePacket.h"
+#include "InitializePlayerPacket.h"
 class Server
 {
 	
@@ -18,6 +19,7 @@ public:
 	Network *network;
 	void Update();
 private:
+	InitializePlayerPacket *initPlayerPacket;
 	CoordinatePacket *coordPacket;
 	std::vector<Player> players;
 	unsigned short port;
